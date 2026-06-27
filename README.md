@@ -1,2 +1,0 @@
-# InspectIC
-Final Exam
