@@ -9,7 +9,6 @@ A single-page internal inspection/search interface built with plain HTML, CSS, a
    - You can double-click the file directly, or
    - Use VS Code's Live Server extension for a local dev server.
 
-That's it — no `npm install`, no build command.
 
 ## Features
 
@@ -31,11 +30,11 @@ That's it — no `npm install`, no build command.
 
 ```
 InspectIC/
-└── index.html   ← everything: HTML, CSS (in <style>), JS (in <script>)
-```
+└── index.html
+└── styles.css
+└── app.js
 
 ## Color Palette Used
-
 | Token | Hex |
 |---|---|
 | Background | `#1A1A1A` |
@@ -47,7 +46,4 @@ InspectIC/
 | White | `#FFFFFF` |
 | Light gray | `#B3B3B3` |
 
-## Notes
 
-- The image area is a placeholder (an IC chip SVG icon). In a real system, this would display an actual device photo.
-- All data is hardcoded in the `inspectionData` array inside the `<script>` tag — easy to swap for a real API call.
