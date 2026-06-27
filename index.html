@@ -1,0 +1,496 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InspectIC – Inspection Search</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- ★ External stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <!-- ══════════════════════════════════════════
+         HEADER
+         Sticky top bar: brand, live clock, export
+    ════════════════════════════════════════════ -->
+    <header>
+
+        <!-- Brand -->
+        <a class="brand" href="#">
+            <div class="brand-logo">
+                <svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="#DC1505" stroke-width="1.5">
+                    <rect x="4" y="4" width="14" height="14" rx="2" />
+                    <rect x="7" y="7" width="8" height="8" rx="1" />
+                    <line x1="1" y1="8" x2="4" y2="8" />
+                    <line x1="1" y1="11" x2="4" y2="11" />
+                    <line x1="1" y1="14" x2="4" y2="14" />
+                    <line x1="18" y1="8" x2="21" y2="8" />
+                    <line x1="18" y1="11" x2="21" y2="11" />
+                    <line x1="18" y1="14" x2="21" y2="14" />
+                    <line x1="8" y1="1" x2="8" y2="4" />
+                    <line x1="11" y1="1" x2="11" y2="4" />
+                    <line x1="14" y1="1" x2="14" y2="4" />
+                    <line x1="8" y1="18" x2="8" y2="21" />
+                    <line x1="11" y1="18" x2="11" y2="21" />
+                    <line x1="14" y1="18" x2="14" y2="21" />
+                </svg>
+            </div>
+            <div class="brand-wm">
+                <div class="wt">Inspect<em>IC</em></div>
+                <div class="ws">Internal Inspection Platform</div>
+            </div>
+        </a>
+
+        <!-- Right side: clock + live dot + export -->
+        <div class="hdr-r">
+            <div class="live-clock">
+                <span class="clock-date" id="clockDate"></span>
+                <span id="clockTime"></span>
+            </div>
+            <div class="live-dot">Live</div>
+
+            <!-- Export dropdown -->
+            <div class="dl-wrap" id="dlWrap">
+                <button class="btn-dl" id="dlToggle">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 2v8M5 7l3 3 3-3M2 12h12" />
+                    </svg>
+                    Export Report
+                    <span style="font-size:10px;opacity:.7;">▾</span>
+                </button>
+                <div class="dl-menu" id="dlMenu">
+                    <div class="dl-item" id="dlCSV">
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="1" width="10" height="14" rx="1" />
+                            <path d="M9 1v4h3" />
+                            <line x1="4" y1="8" x2="8" y2="8" />
+                            <line x1="4" y1="11" x2="9" y2="11" />
+                        </svg>
+                        Download CSV
+                    </div>
+                    <div class="dl-item" id="dlHTML">
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="1" width="10" height="14" rx="1" />
+                            <path d="M9 1v4h3" />
+                            <line x1="4" y1="8" x2="8" y2="8" />
+                            <line x1="4" y1="11" x2="9" y2="11" />
+                        </svg>
+                        Download HTML Report
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════
+         HERO BANNER
+         Title, subtitle, session info
+    ════════════════════════════════════════════ -->
+    <div class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="eyebrow">IC Label Inspection System</div>
+                <h1>Search &amp; Review<br /><em>Inspection Records</em></h1>
+                <p>Scan, verify, and audit IC component labels using barcode decoding, OCR matching, and confidence scoring.</p>
+            </div>
+            <div class="hero-ts" id="heroTs">
+                <span id="hDate">—</span><br />
+                Session started: <span id="hSession">—</span><br />
+                System: <span>ONLINE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MAIN CONTENT
+    ════════════════════════════════════════════ -->
+    <div class="pw">
+
+        <!-- ── Stats + Charts row ── -->
+        <div class="top-row">
+
+            <!-- Stat cards (2×2) -->
+            <div class="stat-col">
+                <div class="stat-card s-total">
+                    <div class="stat-icon">
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="16" />
+                            <line x1="8" y1="12" x2="16" y2="12" />
+                        </svg>
+                    </div>
+                    <div class="stat-label">Total Records</div>
+                    <div class="stat-val" id="sTotal">0</div>
+                    <div class="stat-sub">All inspections</div>
+                </div>
+                <div class="stat-card s-pass">
+                    <div class="stat-icon">
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    </div>
+                    <div class="stat-label">Passed</div>
+                    <div class="stat-val" id="sPass">0</div>
+                    <div class="stat-sub">Cleared</div>
+                </div>
+                <div class="stat-card s-fail">
+                    <div class="stat-icon">
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </div>
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-val" id="sFail">0</div>
+                    <div class="stat-sub">Rejected</div>
+                </div>
+                <div class="stat-card s-rev">
+                    <div class="stat-icon">
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                    </div>
+                    <div class="stat-label">Review</div>
+                    <div class="stat-val" id="sRev">0</div>
+                    <div class="stat-sub">Manual check needed</div>
+                </div>
+            </div>
+
+            <!-- Charts (donut + bar) -->
+            <div class="charts-col">
+                <div class="chart-card">
+                    <div class="chart-title">Status Breakdown</div>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="donutCanvas" width="110" height="110"></canvas>
+                    </div>
+                    <div class="donut-legend" id="donutLegend"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Confidence by Part</div>
+                    <div class="bar-labels" id="confBars"></div>
+                </div>
+            </div>
+        </div><!-- /top-row -->
+        <!-- ── Average confidence band ── -->
+        <div class="avg-band">
+            <span class="avg-label">Average Confidence Score</span>
+            <div class="avg-track">
+                <div class="avg-fill" id="avgFill"></div>
+            </div>
+            <span class="avg-val" id="avgVal">—</span>
+            <div class="avg-desc" id="avgDesc">—</div>
+        </div>
+
+        <!-- ── Search / filter toolbar ── -->
+        <div class="toolbar">
+            <div class="fg" style="flex:2;min-width:200px;">
+                <label for="searchInput">Search</label>
+                <div class="sw">
+                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="9" r="6" />
+                        <path d="M15 15l3 3" />
+                    </svg>
+                    <input type="text" id="searchInput"
+                           placeholder="Part number, manufacturer, lot, OCR text…"
+                           autocomplete="off" spellcheck="false" />
+                </div>
+            </div>
+            <div class="fg">
+                <label for="statusFilter">Status</label>
+                <div class="selw">
+                    <select id="statusFilter">
+                        <option value="ALL">All Statuses</option>
+                        <option value="PASS">PASS</option>
+                        <option value="FAIL">FAIL</option>
+                        <option value="REVIEW">REVIEW</option>
+                    </select>
+                </div>
+            </div>
+            <div class="fg">
+                <label for="mfgFilter">Manufacturer</label>
+                <div class="selw">
+                    <select id="mfgFilter">
+                        <option value="ALL">All Manufacturers</option>
+                        <!-- Options populated dynamically by app.js -->
+                    </select>
+                </div>
+            </div>
+            <div class="t-actions">
+                <button class="btn-g" id="clearBtn">Clear</button>
+            </div>
+        </div>
+
+        <!-- ── Results header + sort ── -->
+        <div class="res-row">
+            <div class="res-count" id="resultsCount">Showing <strong>0</strong> records</div>
+            <div class="sort-row">
+                Sort by
+                <div class="selw">
+                    <select id="sortSelect">
+                        <option value="none">Default order</option>
+                        <option value="conf-desc">Confidence ↓ Highest first</option>
+                        <option value="conf-asc">Confidence ↑ Lowest first</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Cards grid (populated by app.js) ── -->
+        <div class="cards-grid" id="cardsGrid"></div>
+
+    </div><!-- /pw -->
+    <!-- ══════════════════════════════════════════
+         DETAIL MODAL
+         Full inspection record overlay
+    ════════════════════════════════════════════ -->
+    <div class="overlay" id="overlay">
+        <div class="modal" id="modal">
+
+            <!-- Modal header -->
+            <div class="mh">
+                <div class="mh-left">
+                    <div class="mt">Inspection Detail</div>
+                    <div class="mp" id="mPN">—</div>
+                </div>
+                <button class="m-close" id="btnClose">✕</button>
+            </div>
+
+            <!-- IC device image placeholder -->
+            <div class="m-img">
+                <svg width="44" height="44" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1">
+                    <rect x="4" y="4" width="14" height="14" rx="2" />
+                    <rect x="7" y="7" width="8" height="8" rx="1" />
+                    <line x1="1" y1="8" x2="4" y2="8" />
+                    <line x1="1" y1="11" x2="4" y2="11" />
+                    <line x1="1" y1="14" x2="4" y2="14" />
+                    <line x1="18" y1="8" x2="21" y2="8" />
+                    <line x1="18" y1="11" x2="21" y2="11" />
+                    <line x1="18" y1="14" x2="21" y2="14" />
+                    <line x1="8" y1="1" x2="8" y2="4" />
+                    <line x1="11" y1="1" x2="11" y2="4" />
+                    <line x1="14" y1="1" x2="14" y2="4" />
+                    <line x1="8" y1="18" x2="8" y2="21" />
+                    <line x1="11" y1="18" x2="11" y2="21" />
+                    <line x1="14" y1="18" x2="14" y2="21" />
+                </svg>
+                <div class="m-img-lbl">IC Device Image — Placeholder</div>
+            </div>
+
+            <!-- Tab navigation -->
+            <div class="m-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="raw">Raw Data</button>
+                <button class="tab-btn" data-tab="timeline">Timeline</button>
+            </div>
+
+            <!-- Tab: Overview -->
+            <div class="tab-pane active" id="tab-overview">
+                <div class="detail-grid" id="mDetailGrid"></div>
+                <div class="status-row">
+                    <span class="badge" id="mBadge">—</span>
+                    <div class="conf-block">
+                        <div class="conf-block-lbl">Confidence Score <span id="mConfVal">—</span></div>
+                        <div class="conf-big-track"><div class="conf-big-fill" id="mConfBar"></div></div>
+                    </div>
+                </div>
+                <div class="warn-strip" id="warnStrip" style="display:none;">
+                    ⚠ Confidence below 80% — manual review is recommended before use.
+                </div>
+                <div class="chk-list" id="mChkList"></div>
+                <div class="rem" id="mRemarks"></div>
+            </div>
+
+            <!-- Tab: Raw Data -->
+            <div class="tab-pane" id="tab-raw">
+                <div class="code-block" id="mBarcode"></div>
+                <div class="code-block" id="mOcr"></div>
+            </div>
+
+            <!-- Tab: Timeline -->
+            <div class="tab-pane" id="tab-timeline">
+                <div class="tl" id="mTimeline"></div>
+            </div>
+
+        </div><!-- /modal -->
+    </div><!-- /overlay -->
+    <!-- ══════════════════════════════════════════
+         TOAST NOTIFICATION
+    ════════════════════════════════════════════ -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">✓</div>
+        <span id="toastMsg">Report downloaded.</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         FOOTER
+    ════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+
+            <!-- Live system metrics strip -->
+            <div class="footer-metrics">
+                <div class="fm-item">
+                    <div class="fm-label">Total Records</div>
+                    <div class="fm-val" id="fm-total" style="color:var(--tp);">—</div>
+                    <div class="fm-sub">in database</div>
+                </div>
+                <div class="fm-item">
+                    <div class="fm-label">Pass</div>
+                    <div class="fm-val" id="fm-pass" style="color:var(--pass);">—</div>
+                    <div class="fm-sub">inspections cleared</div>
+                </div>
+                <div class="fm-item">
+                    <div class="fm-label">Fail</div>
+                    <div class="fm-val" id="fm-fail" style="color:var(--fail);">—</div>
+                    <div class="fm-sub">require action</div>
+                </div>
+                <div class="fm-item">
+                    <div class="fm-label">Under Review</div>
+                    <div class="fm-val" id="fm-review" style="color:var(--review);">—</div>
+                    <div class="fm-sub">pending manual check</div>
+                </div>
+                <div class="fm-item">
+                    <div class="fm-label">Avg Confidence</div>
+                    <div class="fm-val" id="fm-avg" style="color:var(--tp);">—</div>
+                    <div class="fm-sub">across all records</div>
+                </div>
+                <div class="fm-item">
+                    <div class="fm-label">Pass Rate</div>
+                    <div class="fm-val" id="fm-passrate" style="color:var(--pass);">—</div>
+                    <div class="fm-sub">overall yield</div>
+                </div>
+            </div>
+
+            <!-- Four-column footer grid -->
+            <div class="footer-top">
+
+                <!-- Column 1: Brand -->
+                <div class="ft-brand">
+                    <div class="brand-logo">
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#DC1505" stroke-width="1.5">
+                            <rect x="4" y="4" width="14" height="14" rx="2" />
+                            <rect x="7" y="7" width="8" height="8" rx="1" />
+                            <line x1="1" y1="8" x2="4" y2="8" />
+                            <line x1="1" y1="11" x2="4" y2="11" />
+                            <line x1="1" y1="14" x2="4" y2="14" />
+                            <line x1="18" y1="8" x2="21" y2="8" />
+                            <line x1="18" y1="11" x2="21" y2="11" />
+                            <line x1="18" y1="14" x2="21" y2="14" />
+                            <line x1="8" y1="1" x2="8" y2="4" />
+                            <line x1="11" y1="1" x2="11" y2="4" />
+                            <line x1="14" y1="1" x2="14" y2="4" />
+                            <line x1="8" y1="18" x2="8" y2="21" />
+                            <line x1="11" y1="18" x2="11" y2="21" />
+                            <line x1="14" y1="18" x2="14" y2="21" />
+                        </svg>
+                    </div>
+                    <div class="ft-name">Inspect<em>IC</em></div>
+                    <div class="ft-tag">Internal Inspection Platform</div>
+                    <div class="ft-desc">
+                        InspectIC streamlines IC component inspection by combining OCR, barcode decoding,
+                        and AI-powered confidence scoring into a single searchable dashboard.
+                    </div>
+                    <div class="ft-status-pill">All Systems Operational</div>
+                </div>
+
+                <!-- Column 2: Quick Actions -->
+                <div>
+                    <div class="ft-col-title">Quick Actions</div>
+                    <ul class="ft-links">
+                        <li>
+                            <span onclick="document.getElementById('searchInput').focus();document.getElementById('searchInput').scrollIntoView({behavior:'smooth'});">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5" /><line x1="11" y1="11" x2="14" y2="14" /></svg>
+                                New Search
+                            </span>
+                        </li>
+                        <li>
+                            <span onclick="document.getElementById('statusFilter').value='PASS';render();">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 6 11 13 4" /></svg>
+                                View PASS Only
+                            </span>
+                        </li>
+                        <li>
+                            <span onclick="document.getElementById('statusFilter').value='FAIL';render();">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" /></svg>
+                                View FAIL Only
+                            </span>
+                        </li>
+                        <li>
+                            <span onclick="document.getElementById('statusFilter').value='REVIEW';render();">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6" /><line x1="8" y1="5" x2="8" y2="8" /><circle cx="8" cy="11" r=".5" fill="currentColor" /></svg>
+                                View REVIEW Only
+                            </span>
+                        </li>
+                        <li>
+                            <span onclick="document.getElementById('sortSelect').value='conf-desc';render();">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="5" x2="14" y2="5" /><line x1="4" y1="9" x2="12" y2="9" /><line x1="6" y1="13" x2="10" y2="13" /></svg>
+                                Sort by Confidence
+                            </span>
+                        </li>
+                        <li>
+                            <span onclick="exportCSV();">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" /></svg>
+                                Export CSV
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: System Info -->
+                <div>
+                    <div class="ft-col-title">System Info</div>
+                    <ul class="ft-links">
+                        <li><span style="cursor:default;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="12" height="9" rx="1" /><line x1="5" y1="14" x2="11" y2="14" /><line x1="8" y1="12" x2="8" y2="14" /></svg>Platform v2.4.1</span></li>
+                        <li><span style="cursor:default;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6" /><polyline points="8 5 8 8 10 10" /></svg>Last sync: just now</span></li>
+                        <li><span style="cursor:default;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 1L10 6h5l-4 3 1.5 5L8 11l-4.5 3L5 9 1 6h5z" /></svg>OCR Engine: Tesseract 5</span></li>
+                        <li><span style="cursor:default;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="10" height="12" rx="1" /><line x1="6" y1="6" x2="10" y2="6" /><line x1="6" y1="9" x2="10" y2="9" /></svg>Barcode: 2D / QR / PDF417</span></li>
+                        <li><span style="cursor:default;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h10v7H3zM6 13h4" /><line x1="8" y1="10" x2="8" y2="13" /></svg>Resolution: 4032 × 3024 px</span></li>
+                        <li><span style="cursor:default;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s2-4 6-4 6 4 6 4" /><circle cx="8" cy="5" r="3" /></svg>Environment: Internal Only</span></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Keyboard Shortcuts -->
+                <div>
+                    <div class="ft-shortcut-title">Keyboard Shortcuts</div>
+                    <div class="ft-shortcuts">
+                        <div class="ft-shortcut-row"><span>Focus search</span> <kbd>Ctrl + K</kbd></div>
+                        <div class="ft-shortcut-row"><span>Close modal</span>  <kbd>Esc</kbd></div>
+                        <div class="ft-shortcut-row"><span>Clear filters</span><kbd>Alt + C</kbd></div>
+                        <div class="ft-shortcut-row"><span>Export CSV</span>   <kbd>Alt + E</kbd></div>
+                        <div class="ft-shortcut-row"><span>Filter PASS</span>  <kbd>Alt + P</kbd></div>
+                        <div class="ft-shortcut-row"><span>Filter FAIL</span>  <kbd>Alt + F</kbd></div>
+                        <div class="ft-shortcut-row"><span>Filter REVIEW</span><kbd>Alt + R</kbd></div>
+                    </div>
+                </div>
+
+            </div><!-- /footer-top -->
+            <!-- Footer bottom bar -->
+            <div class="footer-bottom">
+                <div class="fb-left">
+                    <span>© 2025 InspectIC &mdash; Internal Use Only</span>
+                    <span class="sep">|</span>
+                    <span>Unauthorized access is prohibited</span>
+                    <span class="sep">|</span>
+                    <span id="footer-clock" style="font-family:'JetBrains Mono',monospace;"></span>
+                </div>
+                <div class="fb-right">
+                    <span class="fb-build">Build 2025.06</span>
+                    <span class="fb-version">v2.4.1</span>
+                </div>
+            </div>
+
+        </div><!-- /footer-inner -->
+    </footer>
+
+    <!-- ★ External JavaScript (deferred so DOM is ready) -->
+    <script src="app.js"></script>
+
+</body>
+</html>
